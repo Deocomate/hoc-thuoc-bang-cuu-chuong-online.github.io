@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện tập Toán học Nâng cao</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Cài đặt chung --- */
+        :root {
+            --primary-color: #007bff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --background-color: #eef5ff;
+            --font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--dark-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Container chính --- */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Khu vực thống kê --- */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+            background: #f0f4f8;
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .stats p {
+            margin: 0;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .stats span {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        /* --- Các nút chọn chế độ --- */
+        .mode-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-btn {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            border: 2px solid #dee2e6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            background-color: #e2e6ea;
+            border-color: #dae0e5;
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Khu vực phép tính --- */
+        .problem-area {
+            background-color: var(--light-color);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        #question-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* --- Ô nhập liệu --- */
+        .answer-input {
+            width: 80px;
+            height: 60px;
+            font-size: 2rem;
+            text-align: center;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            margin: 0 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* --- Phản hồi --- */
+        #feedback {
+            min-height: 30px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .correct {
+            color: var(--success-color);
+        }
+
+        .incorrect {
+            color: var(--danger-color);
+        }
+
+        /* --- Các nút hành động --- */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        #check-btn {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        #check-btn:hover {
+            background-color: #218838;
+        }
+
+        #new-question-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #new-question-btn:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Luyện tập Toán học</h1>
+
+        <!-- Khu vực thống kê -->
+        <div class="stats">
+            <p>Chuỗi đúng: <span id="streak-count">0</span></p>
+            <p>Nhân đã làm: <span id="multiply-count">0</span></p>
+            <p>Chia đã làm: <span id="divide-count">0</span></p>
+        </div>
+
+        <!-- Nút chọn chế độ -->
+        <div class="mode-selection">
+            <button id="mode-multiply-btn" class="mode-btn">Luyện nhân</button>
+            <button id="mode-divide-btn" class="mode-btn">Luyện chia</button>
+        </div>
+
+        <!-- Khu vực hiển thị câu hỏi và trả lời -->
+        <div class="problem-area">
+            <div id="question-display">
+                <!-- Phép tính sẽ được hiển thị ở đây bằng JavaScript -->
+            </div>
+        </div>
+
+        <!-- Khu vực hiển thị thông báo Đúng/Sai -->
+        <div id="feedback"></div>
+
+        <!-- Các nút chức năng -->
+        <div class="action-buttons">
+            <button id="check-btn" class="action-btn">Kiểm tra</button>
+            <button id="new-question-btn" class="action-btn">Câu hỏi mới</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Lấy các phần tử DOM ---
+        const modeMultiplyBtn = document.getElementById('mode-multiply-btn');
+        const modeDivideBtn = document.getElementById('mode-divide-btn');
+        const questionDisplay = document.getElementById('question-display');
+        const feedback = document.getElementById('feedback');
+        const checkBtn = document.getElementById('check-btn');
+        const newQuestionBtn = document.getElementById('new-question-btn');
+        const streakCountEl = document.getElementById('streak-count');
+        const multiplyCountEl = document.getElementById('multiply-count');
+        const divideCountEl = document.getElementById('divide-count');
+
+        // --- Biến trạng thái của ứng dụng ---
+        let currentMode = 'multiply';
+        let num1, num2, correctAnswer, correctRemainder;
+        let correctStreak = 0;
+        let multiplyCount = 0;
+        let divideCount = 0;
+
+        // --- Hàm cập nhật hiển thị thống kê ---
+        function updateStatsDisplay() {
+            streakCountEl.textContent = correctStreak;
+            multiplyCountEl.textContent = multiplyCount;
+            divideCountEl.textContent = divideCount;
+        }
+
+        // --- Hàm khởi tạo và chuyển đổi chế độ ---
+        function setMode(mode) {
+            currentMode = mode;
+            correctStreak = 0; // Reset chuỗi đúng khi đổi chế độ
+            feedback.textContent = '';
+            updateStatsDisplay();
+
+            if (mode === 'multiply') {
+                modeMultiplyBtn.classList.add('active');
+                modeDivideBtn.classList.remove('active');
+                generateMultiplyQuestion();
+            } else {
+                modeDivideBtn.classList.add('active');
+                modeMultiplyBtn.classList.remove('active');
+                generateDivideQuestion();
+            }
+        }
+
+        // --- Hàm tạo câu hỏi phép nhân với độ khó tăng dần ---
+        function generateMultiplyQuestion() {
+            let maxNum = 6;
+            let minNum = 1;
+
+            if (correctStreak >= 10) {
+                maxNum = 12;
+                minNum = 2; // Tăng độ khó bằng cách bỏ các phép nhân với 1
+            } else if (correctStreak >= 5) {
+                maxNum = 10;
+            }
+
+            num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            correctAnswer = num1 * num2;
+
+            questionDisplay.innerHTML = `
+                <span>${num1}</span>
+                <span>×</span>
+                <span>${num2}</span>
+                <span>=</span>
+                <input type="number" id="answer-result" class="answer-input" onkeydown="handleEnter(event)">
+            `;
+            document.getElementById('answer-result').focus();
+        }
+
+        // --- Hàm tạo câu hỏi phép chia với độ khó tăng dần ---
+        function generateDivideQuestion() {
+            let maxDivisor = 6;
+            let maxMultiplier = 6;
+
+            if (correctStreak >= 10) {
+                maxDivisor = 12;
+                maxMultiplier = 12;
+            } else if (correctStreak >= 5) {
+                maxDivisor = 9;
+                maxMultiplier = 10;
+            }
+
+            num2 = Math.floor(Math.random() * (maxDivisor - 2 + 1)) + 2; // Số chia từ 2 đến maxDivisor
+            const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
+            const remainderOffset = Math.floor(Math.random() * num2);
+            num1 = num2 * multiplier + remainderOffset;
+
+            correctAnswer = Math.floor(num1 / num2);
+            correctRemainder = num1 % num2;
+
+            questionDisplay.innerHTML = `
+                <span>${num1}</span>
+                <span>:</span>
+                <span>${num2}</span>
+                <span>=</span>
+                <input type="number" id="answer-quotient" class="answer-input" onkeydown="handleEnter(event)">
+                <span>dư</span>
+                <input type="number" id="answer-remainder" class="answer-input" onkeydown="handleEnter(event)">
+            `;
+            document.getElementById('answer-quotient').focus();
+        }
+
+        // --- Hàm tạo câu hỏi mới ---
+        function newQuestion() {
+            feedback.textContent = '';
+            feedback.className = '';
+            if (currentMode === 'multiply') {
+                generateMultiplyQuestion();
+            } else {
+                generateDivideQuestion();
+            }
+        }
+
+        // --- Hàm kiểm tra đáp án ---
+        function checkAnswer() {
+            let isCorrect = false;
+            if (currentMode === 'multiply') {
+                const userAnswer = document.getElementById('answer-result').value;
+                if (userAnswer === '') {
+                    feedback.textContent = 'Vui lòng nhập đáp án!';
+                    feedback.className = 'incorrect';
+                    return;
+                }
+                if (parseInt(userAnswer) === correctAnswer) {
+                    isCorrect = true;
+                } else {
+                    feedback.textContent = `Sai! Kết quả đúng là ${correctAnswer}`;
+                }
+                multiplyCount++;
+            } else { // Chế độ chia
+                const userQuotient = document.getElementById('answer-quotient').value;
+                const userRemainder = document.getElementById('answer-remainder').value;
+
+                if (userQuotient === '' || userRemainder === '') {
+                    feedback.textContent = 'Vui lòng nhập đủ thương và số dư!';
+                    feedback.className = 'incorrect';
+                    return;
+                }
+                if (parseInt(userQuotient) === correctAnswer && parseInt(userRemainder) === correctRemainder) {
+                    isCorrect = true;
+                } else {
+                    feedback.textContent = `Sai! Kết quả đúng là ${correctAnswer} dư ${correctRemainder}`;
+                }
+                divideCount++;
+            }
+
+            // Cập nhật chuỗi và phản hồi
+            if (isCorrect) {
+                correctStreak++;
+                feedback.textContent = 'Đúng!';
+                feedback.className = 'correct';
+            } else {
+                correctStreak = 0;
+                feedback.className = 'incorrect';
+            }
+
+            // Cập nhật thống kê và tạo câu hỏi mới sau 1.2 giây nếu trả lời đúng
+            updateStatsDisplay();
+            if (isCorrect) {
+                setTimeout(newQuestion, 1200);
+            }
+        }
+
+        // --- Hàm xử lý khi nhấn phím Enter ---
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        // --- Gán sự kiện cho các nút ---
+        modeMultiplyBtn.addEventListener('click', () => setMode('multiply'));
+        modeDivideBtn.addEventListener('click', () => setMode('divide'));
+        checkBtn.addEventListener('click', checkAnswer);
+        newQuestionBtn.addEventListener('click', newQuestion);
+
+        // --- Khởi động ứng dụng ---
+        window.onload = () => {
+            setMode('multiply'); // Bắt đầu với chế độ nhân
+            updateStatsDisplay();
+        };
+    </script>
+</body>
+
+</html>
